@@ -21,8 +21,7 @@ func (p *ParkingLot) Park(regNo string) int {
 		slot := p.slots[i]
 		if slot.IsAvailable() {
 			slot.Park(regNo)
-			ticket := NewTicket(slot.number, slot.car)
-			return ticket.slotNumber
+			return slot.number
 		}
 	}
 	return -1
@@ -55,4 +54,11 @@ func (p *ParkingLot) IsFull() bool {
 		}
 	}
 	return true
+}
+
+func CalculateCharge(hours int) int {
+	if hours <= 2 {
+		return 10
+	}
+	return 10 + (hours-2)*10
 }
