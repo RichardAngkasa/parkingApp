@@ -17,7 +17,8 @@ func NewParkingLot(capacity int) *ParkingLot {
 }
 
 func (p *ParkingLot) Park(regNo string) int {
-	for _, slot := range p.slots {
+	for i := 0; i < p.capacity; i++ {
+		slot := p.slots[i]
 		if slot.IsAvailable() {
 			slot.Park(regNo)
 			ticket := NewTicket(slot.number, slot.car)
