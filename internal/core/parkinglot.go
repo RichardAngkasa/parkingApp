@@ -1,8 +1,9 @@
 package core
 
 type ParkingLot struct {
-	capacity int
-	slots    []*Slot
+	capacity   int
+	slots      []*Slot
+	parkedCars map[string]bool
 }
 
 func NewParkingLot(capacity int) *ParkingLot {
@@ -11,16 +12,21 @@ func NewParkingLot(capacity int) *ParkingLot {
 		slots[i] = NewSlot(i + 1)
 	}
 	return &ParkingLot{
-		capacity: capacity,
-		slots:    slots,
+		capacity:   capacity,
+		slots:      slots,
+		parkedCars: make(map[string]bool),
 	}
 }
 
 func (p *ParkingLot) Park(regNo string) int {
+	if _, exists := p.parkedCars[regNo]; exists {
+		return -2
+	}
 	for i := 0; i < p.capacity; i++ {
 		slot := p.slots[i]
 		if slot.IsAvailable() {
 			slot.Park(regNo)
+			p.parkedCars[regNo] = true
 			return slot.number
 		}
 	}
@@ -31,6 +37,7 @@ func (p *ParkingLot) Leave(regNo string) int {
 	for _, slot := range p.slots {
 		if !slot.IsAvailable() && slot.car.RegistrationNumber == regNo {
 			slot.Leave()
+			delete(p.parkedCars, regNo)
 			return slot.number
 		}
 	}

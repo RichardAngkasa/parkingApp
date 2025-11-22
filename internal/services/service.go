@@ -24,25 +24,18 @@ func (s *ParkingService) ParkCar(req *dto.ParkRequest) string {
 	if s.parkingLot == nil {
 		return errors.ErrParkingLotNotCreated
 	}
-	if s.isCarAlreadyParked(req.RegistrationNumber) {
-		return "Error: Car " + req.RegistrationNumber + " is already parked"
-	}
 	if s.parkingLot.IsFull() {
 		return errors.ErrParkingLotFull
 	}
 
 	slot := s.parkingLot.Park(req.RegistrationNumber)
-	return "Allocated slot number: " + strconv.Itoa(slot)
-}
-
-func (s *ParkingService) isCarAlreadyParked(regNo string) bool {
-	occupied := s.parkingLot.GetStatus()
-	for _, slot := range occupied {
-		if slot.GetCar().GetRegistrationNumber() == regNo {
-			return true
-		}
+	if slot == -2 {
+		return "Error: Car " + req.RegistrationNumber + " is already parked"
 	}
-	return false
+	if slot == -1 {
+		return errors.ErrParkingLotFull
+	}
+	return "Allocated slot number: " + strconv.Itoa(slot)
 }
 
 func (s *ParkingService) LeaveCar(req *dto.LeaveRequest) string {
