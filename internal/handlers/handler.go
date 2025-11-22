@@ -25,6 +25,9 @@ func (h *Handler) HandleCommand(input string) string {
 
 	switch cmd.Name {
 	case "create_parking_lot":
+		if len(cmd.Args) < 1 {
+			return "Error: Missing capacity parameter"
+		}
 		capacity, err := strconv.Atoi(cmd.Args[0])
 		if err != nil || capacity <= 0 {
 			return "Error: Invalid capacity value"
@@ -32,6 +35,9 @@ func (h *Handler) HandleCommand(input string) string {
 		return h.parkingService.CreateParkingLot(capacity)
 
 	case "park":
+		if len(cmd.Args) < 1 {
+			return "Error: Missing registration number"
+		}
 		req := &dto.ParkRequest{RegistrationNumber: cmd.Args[0]}
 		return h.parkingService.ParkCar(req)
 
