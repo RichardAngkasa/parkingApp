@@ -39,7 +39,7 @@ func (p *ParkingLot) Leave(regNo string) int {
 }
 
 func (p *ParkingLot) GetStatus() []*Slot {
-	var occupied []*Slot
+	occupied := make([]*Slot, 0, p.capacity)
 	for _, slot := range p.slots {
 		if !slot.IsAvailable() {
 			occupied = append(occupied, slot)
