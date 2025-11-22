@@ -20,12 +20,15 @@ func NewHandler() *Handler {
 func (h *Handler) HandleCommand(input string) string {
 	cmd := commands.ParseInput(input)
 	if cmd == nil {
-		return ""
+		return "Error: Invalid command format"
 	}
 
 	switch cmd.Name {
 	case "create_parking_lot":
-		capacity, _ := strconv.Atoi(cmd.Args[0])
+		capacity, err := strconv.Atoi(cmd.Args[0])
+		if err != nil || capacity <= 0 {
+			return "Error: Invalid capacity value"
+		}
 		return h.parkingService.CreateParkingLot(capacity)
 
 	case "park":
@@ -33,7 +36,13 @@ func (h *Handler) HandleCommand(input string) string {
 		return h.parkingService.ParkCar(req)
 
 	case "leave":
-		hours, _ := strconv.Atoi(cmd.Args[1])
+		if len(cmd.Args) < 2 {
+			return "Error: Missing hours parameter"
+		}
+		hours, err := strconv.Atoi(cmd.Args[1])
+		if err != nil || hours <= 0 {
+			return "Error: Invalid hours value"
+		}
 		req := &dto.LeaveRequest{
 			RegistrationNumber: cmd.Args[0],
 			Hours:              hours,
