@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Parking App</title>
+    <style>
+        .container { 
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+        }
+        textarea { width: 100%; height: 400px; }
+        button { padding: 10px; margin: 10px 0; }
+        .output { background: #f0f0f0; padding: 10px; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>Parking App</h1>
+    
+    <div class="container">
+        <div>
+            <h3>Input</h3>
+            <textarea id="inputCommands">create_parking_lot 6
+park KA-01-HH-1234
+park KA-01-HH-9999
+park KA-01-BB-0001
+park KA-01-HH-7777
+park KA-01-HH-2701
+park KA-01-HH-3141
+leave KA-01-HH-3141 4
+status</textarea>
+            <br>
+            <button onclick="runCommands()">Run Commands</button>
+        </div>
+        
+        <div>
+            <h3>Output</h3>
+            <div id="output" class="output">Run commands to see output...</div>
+        </div>
+    </div>
+
+    <script>
+        async function runCommands() {
+            const input = document.getElementById('inputCommands').value;
+            const output = document.getElementById('output');
+            
+            output.textContent = 'Processing...';
+            
+            try {
+                const response = await fetch('/execute', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ commands: input })
+                });
+                
+                const result = await response.json();
+                output.textContent = result.output;
+            } catch (error) {
+                output.textContent = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
